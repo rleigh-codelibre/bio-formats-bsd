@@ -30,44 +30,38 @@
  * #L%
  */
 
-package loci.formats.codec;
+package loci.formats.utests;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import loci.common.RandomAccessInputStream;
-import loci.formats.FormatException;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceException;
+import loci.common.services.ServiceFactory;
+import loci.formats.services.LuraWaveService;
+
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
- * A codec which just returns the exact data it was given, performing no
- * compression or decompression.
+ *
+ * @author Chris Allan <callan at blackcat dot ca>
  */
-public class PassthroughCodec extends BaseCodec {
+public class LuraWaveServiceTest {
 
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
+  private ServiceFactory sf;
+  private LuraWaveService service;
+
+  @BeforeMethod
+  public void setUp() throws DependencyException {
+    sf = new ServiceFactory();
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(loci.common.RandomAccessInputStream, loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-      throws FormatException, IOException {
-    throw new RuntimeException("Not implemented.");
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.codec.Codec#compress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] compress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
+  @Test(expectedExceptions={DependencyException.class})
+  public void testInitialize()
+    throws IOException, DependencyException, ServiceException {
+    service = sf.getInstance(LuraWaveService.class);
+    service.initialize(new ByteArrayInputStream(new byte[0]));
   }
 
 }

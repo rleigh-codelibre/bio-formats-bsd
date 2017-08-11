@@ -33,6 +33,8 @@
     <test name="ServiceTests">
         <groups/>
         <classes>
+            <class name="loci.formats.utests.JAIIIOServiceTest"/>
+            <class name="loci.formats.utests.LuraWaveServiceTest"/>
             <class name="loci.formats.utests.OMEXMLServiceTest"/>
         </classes>
         <packages>

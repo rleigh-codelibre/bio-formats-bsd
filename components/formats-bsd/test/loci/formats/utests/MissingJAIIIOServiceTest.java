@@ -30,44 +30,33 @@
  * #L%
  */
 
-package loci.formats.codec;
+package loci.formats.utests;
 
-import java.io.IOException;
+import static org.testng.AssertJUnit.assertNotNull;
+import loci.common.services.DependencyException;
+import loci.common.services.ServiceFactory;
+import loci.formats.services.JAIIIOService;
 
-import loci.common.RandomAccessInputStream;
-import loci.formats.FormatException;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
- * A codec which just returns the exact data it was given, performing no
- * compression or decompression.
+ *
+ * @author Chris Allan <callan at blackcat dot ca>
  */
-public class PassthroughCodec extends BaseCodec {
+public class MissingJAIIIOServiceTest {
 
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
+  private ServiceFactory sf;
+
+  @BeforeMethod
+  public void setUp() throws DependencyException {
+    sf = new ServiceFactory();
   }
 
-  /* (non-Javadoc)
-   * @see loci.formats.codec.BaseCodec#decompress(loci.common.RandomAccessInputStream, loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] decompress(RandomAccessInputStream in, CodecOptions options)
-      throws FormatException, IOException {
-    throw new RuntimeException("Not implemented.");
-  }
-
-  /* (non-Javadoc)
-   * @see loci.formats.codec.Codec#compress(byte[], loci.formats.codec.CodecOptions)
-   */
-  @Override
-  public byte[] compress(byte[] data, CodecOptions options)
-      throws FormatException {
-    return data;
+  @Test(expectedExceptions={DependencyException.class})
+  public void testInstantiate() throws DependencyException {
+    JAIIIOService service = sf.getInstance(JAIIIOService.class);
+    assertNotNull(service);
   }
 
 }

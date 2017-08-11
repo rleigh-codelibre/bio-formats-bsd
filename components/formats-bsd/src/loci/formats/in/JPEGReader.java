@@ -185,12 +185,7 @@ public class JPEGReader extends DelegateReader {
 
     /* @see loci.formats.FormatReader#initFile(String) */
     protected void initFile(String id) throws FormatException, IOException {
-      try {
-        super.initFile(id);
-      }
-      catch (IllegalArgumentException e) {
-        throw new FormatException(e);
-      }
+      super.initFile(id);
 
       MetadataStore store = makeFilterMetadata();
       LOGGER.info("Parsing JPEG EXIF data");

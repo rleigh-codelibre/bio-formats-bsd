@@ -38,53 +38,64 @@ package loci.formats.codec;
  * @author Wayne Rasband wsr at nih.gov
  */
 public class ByteVector {
-  private ome.codecs.ByteVector vector;
+  private byte[] data;
+  private int size;
 
   public ByteVector() {
-    vector = new ome.codecs.ByteVector();
+    data = new byte[10];
+    size = 0;
   }
 
   public ByteVector(int initialSize) {
-    vector = new ome.codecs.ByteVector(initialSize);
+    data = new byte[initialSize];
+    size = 0;
   }
 
   public ByteVector(byte[] byteBuffer) {
-    vector = new ome.codecs.ByteVector(byteBuffer);
+    data = byteBuffer;
+    size = 0;
   }
 
   public void add(byte x) {
-    this.vector.add(x);
+    while (size >= data.length) doubleCapacity();
+    data[size++] = x;
   }
 
   public int size() {
-    return this.vector.size();
+    return size;
   }
 
   public byte get(int index) {
-    return this.vector.get(index);
+    return data[index];
   }
 
-  public void add(byte[] array) {
-    this.vector.add(array);
-  }
+  public void add(byte[] array) { add(array, 0, array.length); }
 
   public void add(byte[] array, int off, int len) {
-    this.vector.add(array, off, len);
+    while (data.length < size + len) doubleCapacity();
+    if (len == 1) data[size] = array[off];
+    else if (len < 35) {
+      // for loop is faster for small number of elements
+      for (int i=0; i<len; i++) data[size + i] = array[off + i];
+    }
+    else System.arraycopy(array, off, data, size, len);
+    size += len;
   }
 
   void doubleCapacity() {
+    byte[] tmp = new byte[data.length*2 + 1];
+    System.arraycopy(data, 0, tmp, 0, data.length);
+    data = tmp;
   }
 
   public void clear() {
-    this.vector.clear();
+    size = 0;
   }
 
   public byte[] toByteArray() {
-    return this.vector.toByteArray();
-  }
-
-  ome.codecs.ByteVector getWrapped() {
-    return this.vector;
+    byte[] bytes = new byte[size];
+    System.arraycopy(data, 0, bytes, 0, size);
+    return bytes;
   }
 
 }
